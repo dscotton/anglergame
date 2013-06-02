@@ -1,6 +1,4 @@
-library angler_game;
-
-import 'dart:html';
+part of angler_game;
 
 /**
  * Represents a rectangle with x and y position.
