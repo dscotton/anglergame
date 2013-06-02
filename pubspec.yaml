@@ -1,0 +1,10 @@
+name: angler_game
+description: A project for Worldwide Game Development Month.
+dependencies:
+  asset_pack:
+    git: https://github.com/johnmccutchan/asset_pack.git
+  browser: any
+  game_loop:
+    git: https://github.com/johnmccutchan/game_loop.git
+  simple_audio:
+    git: https://github.com/johnmccutchan/simpleaudio.git
