@@ -18,6 +18,7 @@ class Rect {
    * Test for collision with another sprite, assuming rectangular area for both.
    */
   bool collidesWith(Rect other) {
-    return !(left > other.right || right < other.left || top > other.bottom || bottom < other.top);
+    return !(left > other.right || right < other.left
+        || top > other.bottom || bottom < other.top);
   }
 }
