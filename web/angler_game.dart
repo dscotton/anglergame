@@ -17,17 +17,26 @@ class Game {
 
   // Game Modes
   GameMode currentMode;
-  TitleMode titleMode;
+  Map<String, GameMode> gameModes;
 
   Game(this.assetManager, this.canvas) {
-    titleMode = new TitleMode(this.assetManager);
-    currentMode = titleMode;
+    gameModes = new Map();
+    gameModes[ModeChangeException.COOK_MODE] = new CookMode(assetManager);
+    gameModes[ModeChangeException.EXPLORE_MODE] = new ExploreMode(assetManager);
+    gameModes[ModeChangeException.MENU_MODE] = new MenuMode(assetManager);
+    gameModes[ModeChangeException.PAUSE_MODE] = new PauseMode(assetManager);
+    gameModes[ModeChangeException.TITLE_MODE] = new TitleMode(assetManager);
+    currentMode = gameModes[ModeChangeException.TITLE_MODE];
   }
 
   void onUpdate(GameLoopHtml gameLoop) {
-    // TODO: Implement logic for changing mode when the current mode
-    // throws a ModeChangeException.
-    currentMode.onUpdate(gameLoop);
+    try {
+      currentMode.onUpdate(gameLoop);
+    } on ModeChangeException catch (e) {
+      String newMode = e.message;
+      print('Switching to $newMode.');
+      currentMode = gameModes[newMode];
+    }
   }
 
   void onRender(GameLoopHtml gameLoop) {
