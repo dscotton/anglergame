@@ -77,7 +77,7 @@ class CookMode extends GameMode {
   /*
    * Graphically this mode needs several elements:
    * - A background image (probably generated from tiles but should only be
-   *   rendered once).
+   *   rendered once per area).
    * - An enemy sprite.  This will have some animations but no gameplay logic
    *   except possibly charging the player when time runs out.
    * - A player sprite.  This also should have some animations but they will
@@ -94,6 +94,13 @@ class CookMode extends GameMode {
    */
 
   CookMode(this.assetManager);
+
+  /**
+   * Initialize and begin a particular battle.
+   */
+  startBattle(int area) {
+
+  }
 
   onUpdate(GameLoopHtml gameLoop) {
     // TODO: Implement game update logic here.
