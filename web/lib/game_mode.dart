@@ -85,16 +85,16 @@ class ExploreMode extends GameMode {
   Tap last_tap = null;
   Tap new_tap = null;
 
-  ExploreMode(this.assetManager) { 
+  ExploreMode(this.assetManager) {
     mobs = new List();
     immobs = new List();
     actions = new List();
     // Debug code. We're going to create a character, an enemy, and an interactable.
     player = new Player(20, 100, assetManager['images.explore_dbg_player']);
-    
+
     Mobile dbg_mobile = new Mobile(100, 20, assetManager['images.explore_dbg_mob']);
     mobs.add(dbg_mobile);
-    
+
     Immobile dbg_immobile = new Immobile(100, 180, assetManager['images.explore_dbg_immob']);
     immobs.add(dbg_immobile);
   }
@@ -140,7 +140,7 @@ class ExploreMode extends GameMode {
         } else if (last_tap.target == player) {
           // Player->Object, normal attack.
           actions.add(new BasicAttack(player.loc, new_tap.target.loc, gameLoop.frame));
-        } else if (last_tap.target != new_tap.target && new_tap.target != player) { 
+        } else if (last_tap.target != new_tap.target && new_tap.target != player) {
           // Object->Object, throw
           actions.add(new ThrowAttack(last_tap.target.loc, new_tap.target.loc, gameLoop.frame));
         }
@@ -149,10 +149,10 @@ class ExploreMode extends GameMode {
     // Collision check the player.
     mobs.forEach((mob) => player.collidesWith(mob));
     immobs.forEach((immob) => player.collidesWith(immob));
-    
+
     // Move the player.
     player.Move();
-    
+
     // [NYI] Move the mobs.
   }
 
@@ -160,25 +160,25 @@ class ExploreMode extends GameMode {
     // Debug code. Write the mode and some debug information.
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.strokeText("ExploreMode", 10, 10);
-        
+
     // Draw the environment
-    
+
     // Draw immobile objects
     immobs.forEach((immob) => ctx.drawImage(immob.image, immob.rect.left, immob.rect.top));
-    
+
     // Draw mobile objects
     mobs.forEach((mob) => ctx.drawImage(mob.getImage(), mob.rect.left, mob.rect.top));
 
     // Draw the player.
     ctx.drawImage(player.getImage(), player.rect.left, player.rect.top);
-    
+
     // If we have a recently selected object, highlight it.
     // This should be a little "ping" animation, ideally.
     if (last_tap != null && last_tap.target != null) {
       Sprite select = last_tap.target;
       ctx.strokeRect(select.rect.left - 2, select.rect.top - 2, select.rect.width + 4, select.rect.height + 4);
     }
-    
+
     // Draw actions.
     actions.forEach((action) => action.draw(ctx));
   }
@@ -189,6 +189,12 @@ class ExploreMode extends GameMode {
  */
 class CookMode extends GameMode {
   AssetManager assetManager;
+  int course;
+  int beat;
+  int frameCounter;
+  Boss boss;
+
+  Beat get currentBeat => boss.patterns[course][beat];
 
   /*
    * Graphically this mode needs several elements:
@@ -212,18 +218,45 @@ class CookMode extends GameMode {
   CookMode(this.assetManager);
 
   /**
-   * Initialize and begin a particular battle.
+   * Initialize and begin a particular battle.  This must be called before
+   * you can use the mode.
    */
-  startBattle(int area) {
+  startBattle(int bossNum) {
+    boss = Boss.getBoss(bossNum);
+    course = 0;
+    beat = 0;
 
+    // Starting with a negative frame count gives the player some time to
+    // see what they need to do before immediately needing to hit buttons.
+    frameCounter = -300;
   }
 
   onUpdate(GameLoopHtml gameLoop) {
-    // TODO: Implement game update logic here.
+    frameCounter++;
+    if (0 <= frameCounter && frameCounter < currentBeat.frames) {
+      // TODO(dscotton): Check if button is pressed, calculate score, record
+      // that button has been pressed so it can't be registered again for this
+      // beat.
+    } else if (frameCounter >= currentBeat.frames) {
+      frameCounter = 0;
+      beat++;
+      if (beat >= boss.patterns[course].length) {
+        // TODO(dscotton): Calculate combo score here and display an
+        // indicator on screen.
+        beat = 0;
+        course++;
+        if (course >= boss.patterns.length) {
+          // TODO(dscotton): Conclude the battle
+        }
+      }
+    }
   }
 
   onRender(CanvasRenderingContext2D ctx) {
     // TODO: Implement game drawing logic here.
+    // Look ahead at the next several beats, draw a line on the screen and
+    // draw some kind of indicators (color coded circles?) some appropriate
+    // distance away, possibly something like # of frames away x4.
   }
 }
 

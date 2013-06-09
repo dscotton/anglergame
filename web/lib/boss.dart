@@ -21,6 +21,13 @@ class Boss {
   final Boss demon = new Boss([
       [new Beat(1, 30), new Beat(2, 30), new Beat(1, 60), new Beat(3, 30)],
   ]);
+
+  static Boss getBoss(int bossNum) {
+    switch (bossNum) {
+      case 1:
+        return demon;
+    }
+  }
 }
 
 
@@ -37,6 +44,13 @@ class Beat {
   // need to press.  It should be 1, 2, or 3.
   int ingredient;
   int frames;
+
+  // This represents the number of frames between when you can first register
+  // a press for the beat and when it hits its maximum value.  The UI should
+  // indicate the beat happening this many frames after its internal start.
+  // TODO(dscotton): For now this is a constant but we may want to experiment
+  // with other options like frames/2.
+  int get preview_frames => 10;
 
   Beat(this.ingredient, this.frames);
 }
