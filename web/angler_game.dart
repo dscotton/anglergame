@@ -41,9 +41,6 @@ class Game {
   }
 
   void onRender(GameLoopHtml gameLoop) {
-    // TODO: implement this
-    // This is supposed to come from GameLoopHtml, but we can't call
-    // getContext on an Element.  Is there a better way to do this?
     CanvasRenderingContext2D ctx = canvas.getContext('2d');
     currentMode.onRender(ctx);
   }
@@ -67,7 +64,6 @@ void main() {
     GameLoopHtml gameLoop = new GameLoopHtml(canvas);
     gameLoop.onUpdate = game.onUpdate;
     gameLoop.onRender = game.onRender;
-    // TODO(dscotton): Figure out how to control the frame rate.
     // Turn off focus lock (so we have access to the mouse).
     // TODO(jamesvogel): Detect display type to only do this on mouse interfaces (we don't want a cursor on touchscreens).
     gameLoop.pointerLock.lockOnClick = false;
