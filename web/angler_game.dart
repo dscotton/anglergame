@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:asset_pack/asset_pack.dart';
 import 'package:game_loop/game_loop_html.dart';
 
+part "lib/boss.dart";
 part "lib/creature.dart";
 part "lib/game_mode.dart";
 part "lib/rect.dart";
