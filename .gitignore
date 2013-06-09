@@ -2,4 +2,3 @@ web/lib/packages/
 web/assets/packages
 web/assets/images/packages
 .gitattributes
-.gitignore
