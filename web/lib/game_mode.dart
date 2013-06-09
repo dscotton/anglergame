@@ -52,13 +52,22 @@ class TitleMode extends GameMode {
   }
 }
 
-// Helper class used in ExploreMOde
+// Helper class used in ExploreMode for a locational input.
 class Tap {
+  final int STICKINESS = 10;
   Vector loc;
-  Sprite stickied_to;
+  Sprite target = null;
   int frame;
   Tap(x, y, this.frame) {
     loc = new Vector(x, y);
+  }
+  bool StickTo(Sprite near) {
+    if (near.rect.left - STICKINESS < loc.x && loc.x < near.rect.right + STICKINESS &&
+        near.rect.top - STICKINESS < loc.y && loc.y < near.rect.bottom + STICKINESS) {
+      target = near;
+      return true;
+    }
+    return false;
   }
 }
 
@@ -66,15 +75,20 @@ class Tap {
  * This is the 2d overhead mode in which exploration takes place.
  */
 class ExploreMode extends GameMode {
+  final int TAP_TIMEOUT = 30;
+  final int ACTION_ANIMATION = 30;
   AssetManager assetManager;
   Player player;
   List mobs;
   List immobs;
+  List actions;
   Tap last_tap = null;
+  Tap new_tap = null;
 
   ExploreMode(this.assetManager) { 
     mobs = new List();
     immobs = new List();
+    actions = new List();
     // Debug code. We're going to create a character, an enemy, and an interactable.
     player = new Player(20, 100, assetManager['images.explore_dbg_player']);
     
@@ -86,18 +100,51 @@ class ExploreMode extends GameMode {
   }
 
   onUpdate(GameLoopHtml gameLoop) {
+    // Expire last tap.
+    if (last_tap != null && last_tap.frame < gameLoop.frame - TAP_TIMEOUT) {
+      last_tap = null;
+    }
+    // Expire actions
+    actions.removeWhere((action) => action.frame < gameLoop.frame - ACTION_ANIMATION);
     // Record a tap.
     if (gameLoop.mouse.released(0)) {
-      Tap new_tap = new Tap(gameLoop.mouse.x, gameLoop.mouse.y, gameLoop.frame);
-      // [NYI] Expire last tap. Just always expire for now.
-      last_tap = null;
-      if (last_tap == null) {
-        // No previous action.
-        // [NYI] Sticky to nearby element.
+      new_tap = new Tap(gameLoop.mouse.x, gameLoop.mouse.y, gameLoop.frame);
+      // See if new_tap has a target.
+      // Target priority is mobs, then player, then immobs.
+      for (final mob in mobs) {
+        if (new_tap.StickTo(mob)) {
+          break;
+        }
+      }
+      if (new_tap.target == null) {
+        new_tap.StickTo(player);
+      }
+      if (new_tap.target == null) {
+        for (final immob in immobs) {
+          if (new_tap.StickTo(immob)) {
+            break;
+          }
+        }
+      }
+      if (new_tap.target == null) {
         // No nearby element, this is a movement command.
         player.destination = new_tap.loc;
       }
-      last_tap = new_tap;
+      if (last_tap == null && new_tap.target != null) {
+        // Just stick last_tap and move on with life.
+        last_tap = new_tap;
+      } else if (last_tap != null && new_tap.target != null) {
+        if (last_tap.target == player && new_tap.target == player) {
+          // Player double-tap, spin attack.
+          actions.add(new SpinAttack(player.loc, gameLoop.frame));
+        } else if (last_tap.target == player) {
+          // Player->Object, normal attack.
+          actions.add(new BasicAttack(player.loc, new_tap.target.loc, gameLoop.frame));
+        } else if (last_tap.target != new_tap.target) { 
+          // Object->Object, throw
+          actions.add(new ThrowAttack(last_tap.target.loc, new_tap.target.loc, gameLoop.frame));
+        }
+      }
     }
     // Collision check the player.
     mobs.forEach((mob) => player.collidesWith(mob));
@@ -124,6 +171,16 @@ class ExploreMode extends GameMode {
 
     // Draw the player.
     ctx.drawImage(player.getImage(), player.rect.left, player.rect.top);
+    
+    // If we have a recently selected object, highlight it.
+    // This should be a little "ping" animation, ideally.
+    if (last_tap != null && last_tap.target != null) {
+      Sprite select = last_tap.target;
+      ctx.strokeRect(select.rect.left - 2, select.rect.top - 2, select.rect.width + 4, select.rect.height + 4);
+    }
+    
+    // Draw actions.
+    actions.forEach((action) => action.draw(ctx));
   }
 }
 
