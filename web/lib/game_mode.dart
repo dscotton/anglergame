@@ -140,7 +140,7 @@ class ExploreMode extends GameMode {
         } else if (last_tap.target == player) {
           // Player->Object, normal attack.
           actions.add(new BasicAttack(player.loc, new_tap.target.loc, gameLoop.frame));
-        } else if (last_tap.target != new_tap.target) { 
+        } else if (last_tap.target != new_tap.target && new_tap.target != player) { 
           // Object->Object, throw
           actions.add(new ThrowAttack(last_tap.target.loc, new_tap.target.loc, gameLoop.frame));
         }
