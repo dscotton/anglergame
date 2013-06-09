@@ -11,7 +11,7 @@ class Sprite {
     rect = new Rect(x, y, image.width, image.height);
   }
   Sprite.fromRect(this.rect, this.image);
-
+  Vector get loc => new Vector(rect.center_x, rect.center_y);
   bool collidesWith(Sprite other) {
     return rect.collidesWith(other.rect);
   }

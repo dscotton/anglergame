@@ -27,7 +27,7 @@ class ModeChangeException implements Exception {
  * This is the mode used by the title screen of the game.
  *
  * At the moment it only supports displaying a title screen image, and
- * starting the game if the player hits Enter.
+ * starting the game if the player hits Enter or clicks on the screen.
  */
 class TitleMode extends GameMode {
   static final String TITLE_IMAGE = 'images.title';
@@ -40,7 +40,8 @@ class TitleMode extends GameMode {
   }
 
   onUpdate(GameLoopHtml gameLoop) {
-    if (gameLoop.keyboard.pressed(Keyboard.ENTER)) {
+    if (gameLoop.keyboard.pressed(Keyboard.ENTER) ||
+        gameLoop.mouse.released(0) ) {
       throw new ModeChangeException(ModeChangeException.EXPLORE_MODE);
     }
   }
@@ -51,20 +52,78 @@ class TitleMode extends GameMode {
   }
 }
 
+// Helper class used in ExploreMOde
+class Tap {
+  Vector loc;
+  Sprite stickied_to;
+  int frame;
+  Tap(x, y, this.frame) {
+    loc = new Vector(x, y);
+  }
+}
+
 /**
  * This is the 2d overhead mode in which exploration takes place.
  */
 class ExploreMode extends GameMode {
   AssetManager assetManager;
+  Player player;
+  List mobs;
+  List immobs;
+  Tap last_tap = null;
 
-  ExploreMode(this.assetManager);
+  ExploreMode(this.assetManager) { 
+    mobs = new List();
+    immobs = new List();
+    // Debug code. We're going to create a character, an enemy, and an interactable.
+    player = new Player(20, 100, assetManager['images.explore_dbg_player']);
+    
+    Mobile dbg_mobile = new Mobile(100, 20, assetManager['images.explore_dbg_mob']);
+    mobs.add(dbg_mobile);
+    
+    Immobile dbg_immobile = new Immobile(100, 180, assetManager['images.explore_dbg_immob']);
+    immobs.add(dbg_immobile);
+  }
 
   onUpdate(GameLoopHtml gameLoop) {
-    // TODO: Implement game update logic here.
+    // Record a tap.
+    if (gameLoop.mouse.released(0)) {
+      Tap new_tap = new Tap(gameLoop.mouse.x, gameLoop.mouse.y, gameLoop.frame);
+      // [NYI] Expire last tap. Just always expire for now.
+      last_tap = null;
+      if (last_tap == null) {
+        // No previous action.
+        // [NYI] Sticky to nearby element.
+        // No nearby element, this is a movement command.
+        player.destination = new_tap.loc;
+      }
+      last_tap = new_tap;
+    }
+    // Collision check the player.
+    mobs.forEach((mob) => player.collidesWith(mob));
+    immobs.forEach((immob) => player.collidesWith(immob));
+    
+    // Move the player.
+    player.Move();
+    
+    // [NYI] Move the mobs.
   }
 
   onRender(CanvasRenderingContext2D ctx) {
-    // TODO: Implement game drawing logic here.
+    // Debug code. Write the mode and some debug information.
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.strokeText("ExploreMode", 10, 10);
+        
+    // Draw the environment
+    
+    // Draw immobile objects
+    immobs.forEach((immob) => ctx.drawImage(immob.image, immob.rect.left, immob.rect.top));
+    
+    // Draw mobile objects
+    mobs.forEach((mob) => ctx.drawImage(mob.getImage(), mob.rect.left, mob.rect.top));
+
+    // Draw the player.
+    ctx.drawImage(player.getImage(), player.rect.left, player.rect.top);
   }
 }
 

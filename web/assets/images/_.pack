@@ -1,1 +1,6 @@
-{"title":{"url":"title.png","type":"image"}}
+{
+	"title":{"url":"title.png","type":"image"},
+	"explore_dbg_player":{"url":"dbg_player.png","type":"image"},
+	"explore_dbg_mob":{"url":"dbg_mob.png","type":"image"},
+	"explore_dbg_immob":{"url":"dbg_immob.png","type":"image"}
+}

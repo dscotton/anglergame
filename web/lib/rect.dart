@@ -13,12 +13,14 @@ class Rect {
 
   int get right => left + width;
   int get bottom => top + height;
+  int get center_x => (left + width / 2).floor();
+  int get center_y => (top + height / 2).floor();
 
   /**
    * Test for collision with another sprite, assuming rectangular area for both.
    */
   bool collidesWith(Rect other) {
-    return !(left > other.right || right < other.left
-        || top > other.bottom || bottom < other.top);
+    return !(left >= other.right || right <= other.left
+        || top >= other.bottom || bottom <= other.top);
   }
 }

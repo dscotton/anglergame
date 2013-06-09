@@ -38,7 +38,7 @@ class PackImporter extends AssetImporter {
       tracer.packImportEnd(asset);
       return new Future.value(asset);
     }
-    var baseUri = new Uri(asset.url);
+    var baseUri = Uri.parse(asset.url);
     var parsed;
     if (payload is String) {
       try {

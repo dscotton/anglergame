@@ -67,6 +67,9 @@ void main() {
     gameLoop.onUpdate = game.onUpdate;
     gameLoop.onRender = game.onRender;
     // TODO(dscotton): Figure out how to control the frame rate.
+    // Turn off focus lock (so we have access to the mouse).
+    // TODO(jamesvogel): Detect display type to only do this on mouse interfaces (we don't want a cursor on touchscreens).
+    gameLoop.pointerLock.lockOnClick = false;
     gameLoop.start();
   },
   onError: (e) {
