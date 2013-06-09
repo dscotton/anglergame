@@ -71,6 +71,15 @@ class AudioMusic {
     _sound.play();
   }
 
+  /** Crossfades linear to the music [clip] with [delay] and [fadeDuration]. The music will loop. */
+  void crossFadeLinear(num delay, num fadeDuration, AudioClip clip) {
+    var nextTrack = new AudioSound._internal(_source, clip, true);
+    _sound.fadeOut(delay, fadeDuration);
+    nextTrack.fadeIn(delay, fadeDuration);
+    _sound = nextTrack;
+  }
+
+
   /** Stop the music. */
   void stop() {
     _stop();

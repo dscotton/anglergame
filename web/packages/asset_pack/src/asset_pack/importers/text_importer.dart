@@ -26,16 +26,13 @@ class TextImporter extends AssetImporter {
   }
   Future<Asset> import(dynamic payload, Asset asset, AssetPackTrace tracer) {
     tracer.assetImportStart(asset);
-    try {
-      if (payload is String) {
-        asset.imported = payload;
-      } else {
-        tracer.assetImportError(asset, "A text asset was not a String.");
-      }
-      return new Future.value(asset);
-    } finally {
-      tracer.assetImportEnd(asset);
+    if (payload is String) {
+      asset.imported = payload;
+    } else {
+      tracer.assetImportError(asset, "A text asset was not a String.");
     }
+    tracer.assetImportEnd(asset);
+    return new Future.value(asset);
   }
 
   void delete(dynamic imported) {

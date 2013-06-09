@@ -96,20 +96,20 @@ class ProgressControler {
 
   void onEvent(AssetPackTraceEvent event) {
     switch(event.type) {
-      case AssetPackTraceEvent.packImportStart:
+      case AssetPackTraceEvent.PackImportStart:
         _resetCountersIfEqual();
         _total += 1;
         break;
-      case AssetPackTraceEvent.assetLoadStart:
+      case AssetPackTraceEvent.AssetLoadStart:
         _resetCountersIfEqual();
         _total += 2; // load + import
         break;
-      case AssetPackTraceEvent.assetImportStart:
+      case AssetPackTraceEvent.AssetImportStart:
         // ignore already include in load
         break;
-      case AssetPackTraceEvent.packImportEnd:
-      case AssetPackTraceEvent.assetLoadEnd:
-      case AssetPackTraceEvent.assetImportEnd:
+      case AssetPackTraceEvent.PackImportEnd:
+      case AssetPackTraceEvent.AssetLoadEnd:
+      case AssetPackTraceEvent.AssetImportEnd:
         _current += 1;
         break;
     }

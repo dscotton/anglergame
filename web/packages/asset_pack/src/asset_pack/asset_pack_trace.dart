@@ -21,19 +21,19 @@
 part of asset_pack;
 
 class AssetPackTraceEvent {
-  static const packImportStart = 'PackImportStart';
-  static const packImportEnd = 'PackImportEnd';
-  static const assetLoadStart = 'AssetLoadStart';
-  static const assetLoadEnd = 'AssetLoadEnd';
-  static const assetLoadError = 'AssetLoadError';
-  static const assetImportStart = 'AssetImportStart';
-  static const assetImportEnd = 'AssetImportEnd';
-  static const assetImportError = 'AssetImportError';
+  static const PackImportStart = 'PackImportStart';
+  static const PackImportEnd = 'PackImportEnd';
+  static const AssetLoadStart = 'AssetLoadStart';
+  static const AssetLoadEnd = 'AssetLoadEnd';
+  static const AssetLoadError = 'AssetLoadError';
+  static const AssetImportStart = 'AssetImportStart';
+  static const AssetImportEnd = 'AssetImportEnd';
+  static const AssetImportError = 'AssetImportError';
 
   final String type;
   final String label;
   final int microseconds;
-  AssetPackTraceEvent(this.type, this.label, this.microseconds );
+  AssetPackTraceEvent(this.type, this.label, this.microseconds);
 
   dynamic toJson() {
     Map json = new Map();
@@ -104,23 +104,23 @@ class AssetPackTraceViewer {
     if (type == 'AssetImportEnd') {
       json['ph'] = 'E';
       json['name'] = 'import ${event.label}';
-    } else if (type == AssetPackTraceEvent.assetImportStart) {
+    } else if (type == AssetPackTraceEvent.AssetImportStart) {
       json['ph'] = 'B';
       json['name'] = 'import ${event.label}';
-    } else if (type == AssetPackTraceEvent.assetLoadStart) {
+    } else if (type == AssetPackTraceEvent.AssetLoadStart) {
       json['ph'] = 'B';
       json['name'] = 'load ${event.label}';
-    } else if (type == AssetPackTraceEvent.assetLoadEnd) {
+    } else if (type == AssetPackTraceEvent.AssetLoadEnd) {
       json['ph'] = 'E';
       json['name'] = 'load ${event.label}';
-    } else if (type == AssetPackTraceEvent.packImportEnd) {
+    } else if (type == AssetPackTraceEvent.PackImportEnd) {
       json['ph'] = 'E';
       json['name'] = 'pack ${event.label}';
-    } else if (type == AssetPackTraceEvent.packImportStart) {
+    } else if (type == AssetPackTraceEvent.PackImportStart) {
       json['ph'] = 'B';
       json['name'] = 'pack ${event.label}';
-    } else if (type == AssetPackTraceEvent.assetLoadError
-        || type == AssetPackTraceEvent.assetImportError) {
+    } else if (type == AssetPackTraceEvent.AssetLoadError
+        || type == AssetPackTraceEvent.AssetImportError) {
       json['ph'] = 'I';
       json['name'] = '${event.type} ${event.label}';
     } else {
@@ -140,28 +140,28 @@ class AssetPackTrace {
   Stream<AssetPackTraceEvent> asStream() => _streamCtrl.stream;
 
   void packImportStart(Asset asset) =>
-    assetEvent(asset, AssetPackTraceEvent.packImportStart, null);
+    assetEvent(asset, AssetPackTraceEvent.PackImportStart, null);
 
   void packImportEnd(Asset asset) =>
-    assetEvent(asset, AssetPackTraceEvent.packImportEnd, null);
+    assetEvent(asset, AssetPackTraceEvent.PackImportEnd, null);
 
   void assetLoadStart(Asset asset) =>
-    assetEvent(asset, AssetPackTraceEvent.assetLoadStart, null);
+    assetEvent(asset, AssetPackTraceEvent.AssetLoadStart, null);
 
   void assetLoadEnd(Asset asset) =>
-    assetEvent(asset, AssetPackTraceEvent.assetLoadEnd, null);
+    assetEvent(asset, AssetPackTraceEvent.AssetLoadEnd, null);
 
   void assetLoadError(Asset asset, String errorLabel) =>
-    assetEvent(asset, AssetPackTraceEvent.assetLoadError, errorLabel);
+    assetEvent(asset, AssetPackTraceEvent.AssetLoadError, errorLabel);
 
   void assetImportStart(Asset asset) =>
-    assetEvent(asset, AssetPackTraceEvent.assetImportStart, null);
+    assetEvent(asset, AssetPackTraceEvent.AssetImportStart, null);
 
   void assetImportEnd(Asset asset) =>
-    assetEvent(asset, AssetPackTraceEvent.assetImportEnd, null);
+    assetEvent(asset, AssetPackTraceEvent.AssetImportEnd, null);
 
   void assetImportError(Asset asset, String errorLabel) =>
-    assetEvent(asset, AssetPackTraceEvent.assetImportError, errorLabel);
+    assetEvent(asset, AssetPackTraceEvent.AssetImportError, errorLabel);
 
   void assetEvent(Asset asset, String type, String msg) {
     var label = (msg == null) ? asset.url : "${asset.url} >> ${msg}";
@@ -190,7 +190,9 @@ class NullAssetPackTrace extends AssetPackTrace {
 class AssetPackTraceEventAccumulator {
   final List<AssetPackTraceEvent> events = new List<AssetPackTraceEvent>();
 
-  onEvent(AssetPackTraceEvent e) => events.add(e);
+  onEvent(AssetPackTraceEvent e) {
+    return events.add(e);
+  }
 
   dynamic toJson() {
     return events.map((event) => event.toJson()).toList();
@@ -205,5 +207,14 @@ class AssetPackTraceEventAccumulator {
     var summary = new AssetPackTraceSummary(events);
     summary.dump();
   }
+}
 
+class AssetPackTraceAccumulator extends AssetPackTrace {
+  final AssetPackTraceEventAccumulator accumulator =
+      new AssetPackTraceEventAccumulator();
+  List<AssetPackTraceEvent> get events => accumulator.events;
+
+  AssetPackTraceAccumulator() {
+    asStream().listen(accumulator.onEvent);
+  }
 }

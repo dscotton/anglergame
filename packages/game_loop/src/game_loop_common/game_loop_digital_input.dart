@@ -20,6 +20,10 @@
 
 part of game_loop_common;
 
+/// Return false if you don't want the event processed normally.
+typedef bool DigitalButtonEventInterceptor(DigitalButtonEvent event,
+                                           bool repeat);
+
 /** The state of a digital button: frame and time when button was
  * last pressed and released.
  */
@@ -61,6 +65,8 @@ class DigitalInput {
   final Map<int, DigitalButton> buttons =
       new Map<int, DigitalButton>();
 
+  DigitalButtonEventInterceptor interceptor;
+
   /** Create a digital input that supports all buttons in buttonIds. */
   DigitalInput(this.gameLoop, List<int> buttonIds) {
     for (int buttonId in buttonIds) {
@@ -74,6 +80,11 @@ class DigitalInput {
     if (button == null) {
       return;
     }
+    if (interceptor != null) {
+      if (interceptor(event, button.down) == false) {
+        return;
+      }
+    }
     if (event.down) {
       if (button.down == false) {
         // Ignore repeated downs.
@@ -85,6 +96,7 @@ class DigitalInput {
       button.timeReleased = event.time;
     }
   }
+
 
   /** Is [buttonId] down this frame? */
   bool isDown(int buttonId) {
