@@ -10,6 +10,7 @@ part "lib/actions.dart";
 part "lib/boss.dart";
 part "lib/creature.dart";
 part "lib/game_mode.dart";
+part "lib/inventory.dart";
 part "lib/rect.dart";
 part "lib/sprite.dart";
 

@@ -59,13 +59,24 @@ class Vector {
 // The player object
 class Player extends Creature {
   static final int STEPS_PER_TICK = 10;
-  Player(int x, int y, image) : super(x, y, image);
+
+  // Inventory are just the IDs of ingredient constants TBD.
+  List<int> inventory;
+  List<List<int>> equipped;
+
+  Player(int x, int y, image) : super(x, y, image) {
+    inventory = new List();
+    equipped = new List();
+  }
+
   ImageElement getImage() {
     return this.image;
   }
+
   void StopMovement() {  // indicates a safe but halting collision
     destination = null;
   }
+
   bool collidesWith(Sprite other) {
     if (super.collidesWith(other)) {
       StopMovement();

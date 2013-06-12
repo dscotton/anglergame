@@ -233,11 +233,7 @@ class CookMode extends GameMode {
 
   onUpdate(GameLoopHtml gameLoop) {
     frameCounter++;
-    if (0 <= frameCounter && frameCounter < currentBeat.frames) {
-      // TODO(dscotton): Check if button is pressed, calculate score, record
-      // that button has been pressed so it can't be registered again for this
-      // beat.
-    } else if (frameCounter >= currentBeat.frames) {
+    if (frameCounter >= currentBeat.frames) {
       frameCounter = 0;
       beat++;
       if (beat >= boss.patterns[course].length) {
@@ -249,6 +245,15 @@ class CookMode extends GameMode {
           // TODO(dscotton): Conclude the battle
         }
       }
+    }
+
+    for (int key in [Keyboard.ONE, Keyboard.TWO, Keyboard.THREE]) {
+      if (key != currentBeat.button && gameLoop.keyboard.pressed(key)) {
+        // TODO(dscotton): Register minimum score for the beat.
+      }
+    }
+    if (gameLoop.keyboard.pressed(currentBeat.button)) {
+      // TODO(dscotton): Register beat score based on the frameCounter.
     }
   }
 

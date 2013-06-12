@@ -19,7 +19,8 @@ class Boss {
 
   // Hard coded boss patterns
   final Boss demon = new Boss([
-      [new Beat(1, 30), new Beat(2, 30), new Beat(1, 60), new Beat(3, 30)],
+      [new Beat(Keyboard.ONE, 30), new Beat(Keyboard.TWO, 30),
+       new Beat(Keyboard.ONE, 60), new Beat(Keyboard.THREE, 30)],
   ]);
 
   static Boss getBoss(int bossNum) {
@@ -42,7 +43,7 @@ class Beat {
   // For each battle there are three ingredients. This corresponds to which
   // ingredient the player needs to use for this Beat, and which button they
   // need to press.  It should be 1, 2, or 3.
-  int ingredient;
+  int button;
   int frames;
 
   // This represents the number of frames between when you can first register
@@ -52,5 +53,5 @@ class Beat {
   // with other options like frames/2.
   int get preview_frames => 10;
 
-  Beat(this.ingredient, this.frames);
+  Beat(this.button, this.frames);
 }
