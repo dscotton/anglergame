@@ -10,23 +10,50 @@
 part of angler_game;
 
 // TODO(dscotton): Add boss animations
-class Boss {
+abstract class Boss {
   // Bosses contain patterns for three different "courses" or combos.
   // Each course is a list of Beats.
   List<List<Beat>> patterns;
+  Map<Element, double> elementalMultipliers;
 
-  Boss(this.patterns);
-
-  // Hard coded boss patterns
-  final Boss demon = new Boss([
-      [new Beat(Keyboard.ONE, 30), new Beat(Keyboard.TWO, 30),
-       new Beat(Keyboard.ONE, 60), new Beat(Keyboard.THREE, 30)],
-  ]);
+  static final Boss sunstone = new Sunstone();
 
   static Boss getBoss(int bossNum) {
     switch (bossNum) {
       case 1:
-        return demon;
+        return sunstone;
+    }
+  }
+
+  /**
+   * Get the damage multiplier for a given element against this boss.
+   */
+  double getMultiplier(Element element);
+}
+
+
+/**
+ * This class represents the first Boss.  It contains hard coded data for
+ * patterns and elemental weaknesses.
+ */
+class Sunstone extends Boss {
+  static const double WEAKNESS_MULTIPLIER = 1.5;
+  static final Set<Element> weaknesses = new Set.from([Element.AIR, Element.DARK]);
+
+  Sunstone() {
+    // We must initialize a new version of patterns for each instance, because
+    // Beats are mutable and are modified in the course of registering scores.
+    patterns = [
+        [new Beat(Keyboard.ONE, 30), new Beat(Keyboard.TWO, 30),
+         new Beat(Keyboard.ONE, 60), new Beat(Keyboard.THREE, 30)],
+    ];
+  }
+
+  double getMultiplier(Element element) {
+    if (weaknesses.contains(element)) {
+      return WEAKNESS_MULTIPLIER;
+    } else {
+      return 1.0;
     }
   }
 }
@@ -40,11 +67,18 @@ class Boss {
  * frames corresponds to a quarter note at 120 BPM.
  */
 class Beat {
+  const double MIN_MULTIPLIER = 0.5;
+  const double MAX_MULTIPLIER = 1.0;
+  const double PERFECTION_BONUS = 0.1;
+  // Number of frames before and after that a hit will score >MIN points.
+  const int FRAME_WINDOW = 10;
+
   // For each battle there are three ingredients. This corresponds to which
   // ingredient the player needs to use for this Beat, and which button they
   // need to press.  It should be 1, 2, or 3.
   int button;
   int frames;
+  double score;
 
   // This represents the number of frames between when you can first register
   // a press for the beat and when it hits its maximum value.  The UI should
@@ -53,5 +87,43 @@ class Beat {
   // with other options like frames/2.
   int get preview_frames => 10;
 
-  Beat(this.button, this.frames);
+  Beat(this.button, this.frames) : score = null;
+
+  /**
+   * Calculate a score for this beat given the frame in which it was hit.
+   */
+  void scoreBeat(int frame) {
+
+  }
+}
+
+
+/**
+ * A combo collects numbers from completed beats and can calculate final score.
+ *
+ * TODO(dscotton): Procedurally generated combo names (based on effectiveness
+ * and ingredients, with some hard coded combos).
+ */
+class Combo {
+  Boss enemy;
+  Set<Ingredient> ingredients;
+  double multiplier;
+  int baseDamage;
+
+  Combo(this.enemy) : ingredients = new Set(), multiplier = 1.0, baseDamage = 0;
+
+  List<Element> getElements() {
+    List<Element> elements = new List();
+    for (Ingredient i in ingredients) {
+      elements.add(i.element);
+    }
+  }
+
+  double getScore() {
+    double elementMultiplier = 1.0;
+    for (Element e in getElements()) {
+      elementMultiplier *= enemy.getMultiplier(e);
+    }
+    return baseDamage * multiplier * elementMultiplier;
+  }
 }

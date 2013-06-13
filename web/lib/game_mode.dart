@@ -189,12 +189,16 @@ class ExploreMode extends GameMode {
  */
 class CookMode extends GameMode {
   AssetManager assetManager;
+  Player player;
+  Combo currentCombo;
   int course;
   int beat;
   int frameCounter;
+  double totalScore;
   Boss boss;
 
   Beat get currentBeat => boss.patterns[course][beat];
+  List<Ingredient> get equippedIngredients => player.equipped[course];
 
   /*
    * Graphically this mode needs several elements:
@@ -221,10 +225,13 @@ class CookMode extends GameMode {
    * Initialize and begin a particular battle.  This must be called before
    * you can use the mode.
    */
-  startBattle(int bossNum) {
+  startBattle(int bossNum, Player player) {
     boss = Boss.getBoss(bossNum);
+    this.player = player;
+    currentCombo = new Combo(boss);
     course = 0;
     beat = 0;
+    totalScore = 0.0;
 
     // Starting with a negative frame count gives the player some time to
     // see what they need to do before immediately needing to hit buttons.
@@ -237,8 +244,9 @@ class CookMode extends GameMode {
       frameCounter = 0;
       beat++;
       if (beat >= boss.patterns[course].length) {
-        // TODO(dscotton): Calculate combo score here and display an
-        // indicator on screen.
+        totalScore += currentCombo.getScore();
+        // TODO(dscotton): Display something about this combo on screen.
+        currentCombo = new Combo(boss);
         beat = 0;
         course++;
         if (course >= boss.patterns.length) {
@@ -247,13 +255,17 @@ class CookMode extends GameMode {
       }
     }
 
-    for (int key in [Keyboard.ONE, Keyboard.TWO, Keyboard.THREE]) {
-      if (key != currentBeat.button && gameLoop.keyboard.pressed(key)) {
-        // TODO(dscotton): Register minimum score for the beat.
+    // If the player hasn't hit this beat yet, check for input and score it.
+    if (currentBeat.score == null) {
+      for (int key in [Keyboard.ONE, Keyboard.TWO, Keyboard.THREE]) {
+        if (key != currentBeat.button && gameLoop.keyboard.pressed(key)) {
+          currentBeat.score = currentBeat.MIN_MULTIPLIER;
+        }
       }
-    }
-    if (gameLoop.keyboard.pressed(currentBeat.button)) {
-      // TODO(dscotton): Register beat score based on the frameCounter.
+      if (gameLoop.keyboard.pressed(currentBeat.button)) {
+        // TODO(dscotton): Register beat score based on the frameCounter.
+      }
+      // TODO(dscotton): If it now has a score, add to the combo.
     }
   }
 
