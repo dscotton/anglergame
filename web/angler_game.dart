@@ -2,7 +2,7 @@ library angler_game;
 
 import 'dart:async';
 import 'dart:html';
-import 'dart:math';
+import 'dart:math' as math;
 import 'package:asset_pack/asset_pack.dart';
 import 'package:game_loop/game_loop_html.dart';
 import 'package:vector_math/vector_math.dart';

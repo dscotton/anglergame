@@ -91,12 +91,12 @@ class ExploreMode extends GameMode {
     immobs = new List();
     actions = new List();
     // Debug code. We're going to create a character, an enemy, and an interactable.
-    player = new Player(20, 100, assetManager['images.explore_dbg_player']);
+    player = new Player(20.0, 100.0, assetManager['images.explore_dbg_player']);
 
-    Mobile dbg_mobile = new Mobile(100, 20, assetManager['images.explore_dbg_mob']);
+    Mobile dbg_mobile = new Mobile(100.0, 20.0, assetManager['images.explore_dbg_mob']);
     mobs.add(dbg_mobile);
 
-    Immobile dbg_immobile = new Immobile(100, 180, assetManager['images.explore_dbg_immob']);
+    Immobile dbg_immobile = new Immobile(100.0, 180.0, assetManager['images.explore_dbg_immob']);
     immobs.add(dbg_immobile);
   }
 
@@ -152,8 +152,8 @@ class ExploreMode extends GameMode {
     mobs.forEach((mob) => player.collidesWith(mob));
     // immobs.forEach((immob) => player.collidesWith(immob));
 
-    // Move the player with collision checks vs immobiles.
-    player.Move(immobs);
+    // Move the player.
+    player.Move();
 
     // [NYI] Move the mobs.
   }
