@@ -5,14 +5,14 @@
 part of angler_game;
 
 abstract class Action {
-  Vector loc;
+  Vector2 loc;
   int frame;
   Action(this.loc, this.frame);
   void draw(CanvasRenderingContext2D ctx);
 }
 
 abstract class LinearAction extends Action {
-  Vector end_loc;
+  Vector2 end_loc;
   LinearAction(loc, this.end_loc, frame) : super(loc, frame);
 }
 

@@ -8,3 +8,5 @@ dependencies:
     git: https://github.com/johnmccutchan/game_loop.git
   simple_audio:
     git: https://github.com/johnmccutchan/simpleaudio.git
+  vector_math:
+    git: https://github.com/johnmccutchan/vector_math.git

@@ -5,6 +5,7 @@ import 'dart:html';
 import 'dart:math';
 import 'package:asset_pack/asset_pack.dart';
 import 'package:game_loop/game_loop_html.dart';
+import 'package:vector_math/vector_math.dart';
 
 part "lib/actions.dart";
 part "lib/boss.dart";

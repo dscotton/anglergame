@@ -56,11 +56,11 @@ class TitleMode extends GameMode {
 // Helper class used in ExploreMode for a locational input.
 class Tap {
   final int STICKINESS = 10;
-  Vector loc;
+  Vector2 loc;
   Sprite target = null;
   int frame;
   Tap(x, y, this.frame) {
-    loc = new Vector(x, y);
+    loc = new Vector2(x.toDouble(), y.toDouble());
   }
   bool StickTo(Sprite near) {
     if (near.rect.left - STICKINESS < loc.x && loc.x < near.rect.right + STICKINESS &&
@@ -80,8 +80,8 @@ class ExploreMode extends GameMode {
   final int ACTION_ANIMATION = 30;
   AssetManager assetManager;
   Player player;
-  List mobs;
-  List immobs;
+  List<Mobile> mobs;
+  List<Immobile> immobs;
   List actions;
   Tap last_tap = null;
   Tap new_tap = null;
@@ -129,7 +129,8 @@ class ExploreMode extends GameMode {
       }
       if (new_tap.target == null) {
         // No nearby element, this is a movement command.
-        player.destination = new_tap.loc;
+        //player.destination = new_tap.loc;
+        player.SetDestCollisionDetect(new_tap.loc, immobs);
       }
       if (last_tap == null && new_tap.target != null) {
         // Just stick last_tap and move on with life.
@@ -147,12 +148,12 @@ class ExploreMode extends GameMode {
         }
       }
     }
-    // Collision check the player.
+    // Collision check the player vs mobiles.
     mobs.forEach((mob) => player.collidesWith(mob));
-    immobs.forEach((immob) => player.collidesWith(immob));
+    // immobs.forEach((immob) => player.collidesWith(immob));
 
-    // Move the player.
-    player.Move();
+    // Move the player with collision checks vs immobiles.
+    player.Move(immobs);
 
     // [NYI] Move the mobs.
   }

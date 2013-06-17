@@ -10,22 +10,56 @@ part of angler_game;
  */
 abstract class Creature extends Sprite {
   final int speed = 10;  // sample speed
-  Vector destination;
+  Vector2 destination;
   Creature(int x, int y, image) : super(x, y, image);
-  void MoveToward(Vector v, int distance) {
-    Vector delta = v - loc;
-    int delta_mag = delta.magnitude;
+  void SetDestCollisionDetect(Vector2 dest, List<Immobile> immobs) {
+    destination = dest;
+    Vector2 delta = destination - loc;
+    // We're checking to see if any of the corner-to-corner paths intersect any of
+    // the boundry walls for each immobile object. This will fail for objects smaller
+    // than the player.
+    Vector2 l_t = new Vector2(rect.left.toDouble(), rect.top.toDouble());
+    Vector2 r_t = new Vector2(rect.right.toDouble(), rect.top.toDouble());
+    Vector2 l_b = new Vector2(rect.left.toDouble(), rect.bottom.toDouble());
+    Vector2 r_b = new Vector2(rect.right.toDouble(), rect.bottom.toDouble());
+    for (Immobile immob in immobs) {
+      // Check if the corner vector intersects any boundry of immob; if it does, fix destination along that axis.
+      if (loc.x <= destination.x &&
+          (immob.crossLeft(l_t, l_t + delta) || immob.crossLeft(r_t, r_t + delta) ||
+           immob.crossLeft(l_b, l_b + delta) || immob.crossLeft(r_b, r_b + delta))) {
+        destination.x = immob.rect.left - (rect.width / 2) - 1; 
+      }
+      if (loc.y <= destination.y &&
+          (immob.crossTop(l_t, l_t + delta) || immob.crossTop(r_t, r_t + delta) ||
+           immob.crossTop(l_b, l_b + delta) || immob.crossTop(r_b, r_b + delta))) {
+        destination.y = immob.rect.top - (rect.height / 2) - 1;
+      }
+      if (loc.x > destination.x &&
+          (immob.crossRight(l_t, l_t + delta) || immob.crossRight(r_t, r_t + delta) ||
+           immob.crossRight(l_b, l_b + delta) || immob.crossRight(r_b, r_b + delta))) {
+        destination.x = immob.rect.right + (rect.width / 2) + 1; 
+      }
+      if (loc.y > destination.y &&
+          (immob.crossBottom(l_t, l_t + delta) || immob.crossBottom(r_t, r_t + delta) ||
+           immob.crossBottom(l_b, l_b + delta) || immob.crossBottom(r_b, r_b + delta))) {
+        destination.y = immob.rect.bottom + (rect.height / 2) + 1;
+      }
+    }    
+  }
+  void MoveToward(Vector2 v, int distance) {
+    Vector2 delta = v - loc;
+    double delta_mag = delta.length;
     if (delta_mag <= distance) {
       // Arrive
-      rect.left += delta.x;
-      rect.top += delta.y;
+      rect.left += delta.x.floor();
+      rect.top += delta.y.floor();
     } else {
       // Get closer
       rect.left += (delta.x * (distance / delta_mag)).floor();
       rect.top += (delta.y * (distance / delta_mag)).floor();
     }
   }
-  void Move() {
+  void Move(List<Immobile> immobs) {
     if (destination == null || loc == destination) {
       return;  // we're here, idle
     } else {
@@ -34,26 +68,6 @@ abstract class Creature extends Sprite {
   }
   ImageElement getImage();
   // get image => _getImage();
-}
-
-/**
- * Simple 2 dimensional vector containing an x and y component.
- */
-class Vector {
-  int x;
-  int y;
-
-  Vector(this.x, this.y);
-  int get magnitude => sqrt(x * x + y * y).floor();
-  bool operator ==(Vector v) {
-    return (x == v.x && y == v.y);
-  }
-  Vector operator +(Vector v) {
-    return new Vector(x + v.x, y + v.y);
-  }
-  Vector operator -(Vector v) {
-    return new Vector(x - v.x, y - v.y);
-  }
 }
 
 // The player object
@@ -75,7 +89,7 @@ class Player extends Creature {
   void StopMovement() {  // indicates a safe but halting collision
     destination = null;
   }
-
+  
   bool collidesWith(Sprite other) {
     if (super.collidesWith(other)) {
       StopMovement();
@@ -98,4 +112,5 @@ class Mobile extends Creature {
 // A static interactable object
 class Immobile extends Sprite {
   Immobile(int x, int y, image) : super(x, y, image);
+  
 }
