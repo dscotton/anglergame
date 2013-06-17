@@ -29,6 +29,7 @@ class Game {
     gameModes[ModeChangeException.MENU_MODE] = new MenuMode(assetManager);
     gameModes[ModeChangeException.PAUSE_MODE] = new PauseMode(assetManager);
     gameModes[ModeChangeException.TITLE_MODE] = new TitleMode(assetManager);
+    gameModes[ModeChangeException.GAME_OVER_MODE] = new GameOverMode(assetManager);
     currentMode = gameModes[ModeChangeException.TITLE_MODE];
   }
 
