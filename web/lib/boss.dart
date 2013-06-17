@@ -15,6 +15,7 @@ abstract class Boss {
   // Each course is a list of Beats.
   List<List<Beat>> patterns;
   Map<Element, double> elementalMultipliers;
+  int hitPoints;
 
   static final Boss sunstone = new Sunstone();
 
@@ -38,6 +39,7 @@ abstract class Boss {
  */
 class Sunstone extends Boss {
   static const double WEAKNESS_MULTIPLIER = 1.5;
+  static const int HP = 100;
   static final Set<Element> weaknesses = new Set.from([Element.AIR, Element.DARK]);
 
   Sunstone() {
@@ -47,6 +49,7 @@ class Sunstone extends Boss {
         [new Beat(Keyboard.ONE, 30), new Beat(Keyboard.TWO, 30),
          new Beat(Keyboard.ONE, 60), new Beat(Keyboard.THREE, 30)],
     ];
+    hitPoints = HP;
   }
 
   double getMultiplier(Element element) {
@@ -69,6 +72,7 @@ class Sunstone extends Boss {
 class Beat {
   const double MIN_MULTIPLIER = 0.5;
   const double MAX_MULTIPLIER = 1.0;
+  const double MAX_PENALTY = MAX_MULTIPLIER - MIN_MULTIPLIER;
   const double PERFECTION_BONUS = 0.1;
   // Number of frames before and after that a hit will score >MIN points.
   const int FRAME_WINDOW = 10;
@@ -93,7 +97,13 @@ class Beat {
    * Calculate a score for this beat given the frame in which it was hit.
    */
   void scoreBeat(int frame) {
-
+    if (frame < (preview_frames - FRAME_WINDOW) || frame >= (preview_frames + FRAME_WINDOW)) {
+      score = MIN_MULTIPLIER;
+    } else if (frame == preview_frames) {
+      score = MAX_MULTIPLIER + PERFECTION_BONUS;
+    } else {
+      score = MAX_MULTIPLIER - MAX_PENALTY * (preview_frames - frame).abs() / FRAME_WINDOW;
+    }
   }
 }
 

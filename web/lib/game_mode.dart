@@ -17,6 +17,7 @@ class ModeChangeException implements Exception {
   static const String COOK_MODE = 'CookMode';
   static const String MENU_MODE = 'MenuMode';
   static const String PAUSE_MODE = 'PauseMode';
+  static const String GAME_OVER_MODE = "GameOverMode";
 
   final String message;
 
@@ -250,22 +251,34 @@ class CookMode extends GameMode {
         beat = 0;
         course++;
         if (course >= boss.patterns.length) {
-          // TODO(dscotton): Conclude the battle
+          if (totalScore >= boss.hitPoints) {
+            throw new ModeChangeException(ModeChangeException.EXPLORE_MODE);
+          } else {
+            print('You lost, chump!');
+            throw new ModeChangeException(ModeChangeException.GAME_OVER_MODE);
+          }
         }
       }
     }
 
     // If the player hasn't hit this beat yet, check for input and score it.
     if (currentBeat.score == null) {
+      // TODO(dscotton): Support touchscreens.
       for (int key in [Keyboard.ONE, Keyboard.TWO, Keyboard.THREE]) {
         if (key != currentBeat.button && gameLoop.keyboard.pressed(key)) {
           currentBeat.score = currentBeat.MIN_MULTIPLIER;
         }
       }
       if (gameLoop.keyboard.pressed(currentBeat.button)) {
-        // TODO(dscotton): Register beat score based on the frameCounter.
+        currentBeat.scoreBeat(frameCounter);
       }
-      // TODO(dscotton): If it now has a score, add to the combo.
+    }
+    if (currentBeat.score != null) {
+      Ingredient ingredient = player.equipped[course][currentBeat.button];
+      currentCombo.ingredients.add(ingredient);
+      currentCombo.baseDamage += (ingredient.baseDamage * currentBeat.score);
+      double multiplier = (ingredient.multiplier - 1.0) * currentBeat.score + 1.0;
+      currentCombo.multiplier *= (1.0 + multiplier);
     }
   }
 
@@ -295,6 +308,20 @@ class MenuMode extends GameMode {
   AssetManager assetManager;
 
   MenuMode(this.assetManager);
+
+  onUpdate(GameLoopHtml gameLoop) {
+    // TODO: Implement game update logic here.
+  }
+
+  onRender(CanvasRenderingContext2D ctx) {
+    // TODO: Implement game drawing logic here.
+  }
+}
+
+class GameOverMode extends GameMode {
+  AssetManager assetManager;
+
+  GameOverMode(this.assetManager);
 
   onUpdate(GameLoopHtml gameLoop) {
     // TODO: Implement game update logic here.

@@ -60,9 +60,8 @@ class Vector {
 class Player extends Creature {
   static final int STEPS_PER_TICK = 10;
 
-  // Inventory are just the IDs of ingredient constants TBD.
-  List<int> inventory;
-  List<List<int>> equipped;
+  List<Ingredient> inventory;
+  List<List<Ingredient>> equipped;
 
   Player(int x, int y, image) : super(x, y, image) {
     inventory = new List();
