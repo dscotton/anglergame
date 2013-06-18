@@ -8,7 +8,7 @@
 #file map_data.json
 {
 #tileset
-#tile
+#tstile
 #tilebitmap <TileSetIdentifier>-<TileNumber+1>.png
 #end tilebitmap
 #end tile
@@ -19,7 +19,7 @@
     "tileset" : "<TileSetIdentifier>",
     "layout" : 
 #mapdata  "[\n      ["  ","  ",\n"  "],\n      ["  "],\n    ],"
-{"image": "<TileSetIdentifier>-<TileNumber>", "bounds": <Bounds:"%2d">, "mapcodes": <MapCode:"%2d">}
+{"back": <TileNumber>, "mid": <TileNumber>, "front": <TileNumber>, "bounds": <Bounds:"%2d">, "mapcodes": <MapCode:"%2d">}
 #end mapdata
   },
 #end map
