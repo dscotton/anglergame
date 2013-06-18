@@ -1,0 +1,27 @@
+; Tilestudio definition file.
+;
+; Configures Tile Studio to export map data in JSON format, and export
+; all tile images.
+; Note: +1 is added to the tile number in the filename to correct for a
+; weird discrepancy between the file names and the map data.
+
+#file map_data.json
+{
+#tileset
+#tile
+#tilebitmap <TileSetIdentifier>-<TileNumber+1>.png
+#end tilebitmap
+#end tile
+#map
+  "<MapIdentifier>" : {
+    "width" : <MapWidth>,
+    "height" : <MapHeight>,
+    "tileset" : "<TileSetIdentifier>",
+    "layout" : 
+#mapdata  "[\n      ["  ","  ",\n"  "],\n      ["  "],\n    ],"
+{"image": "<TileSetIdentifier>-<TileNumber>", "bounds": <Bounds:"%2d">, "mapcodes": <MapCode:"%2d">}
+#end mapdata
+  },
+#end map
+#end tileset
+}
