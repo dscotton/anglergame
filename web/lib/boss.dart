@@ -70,12 +70,12 @@ class Sunstone extends Boss {
  * frames corresponds to a quarter note at 120 BPM.
  */
 class Beat {
-  const double MIN_MULTIPLIER = 0.5;
-  const double MAX_MULTIPLIER = 1.0;
-  const double MAX_PENALTY = MAX_MULTIPLIER - MIN_MULTIPLIER;
-  const double PERFECTION_BONUS = 0.1;
+  static const double MIN_MULTIPLIER = 0.5;
+  static const double MAX_MULTIPLIER = 1.0;
+  static const double MAX_PENALTY = MAX_MULTIPLIER - MIN_MULTIPLIER;
+  static const double PERFECTION_BONUS = 0.1;
   // Number of frames before and after that a hit will score >MIN points.
-  const int FRAME_WINDOW = 10;
+  static const int FRAME_WINDOW = 10;
 
   // For each battle there are three ingredients. This corresponds to which
   // ingredient the player needs to use for this Beat, and which button they

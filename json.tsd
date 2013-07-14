@@ -11,7 +11,7 @@
 #tstile
 #tilebitmap <TileSetIdentifier>-<TileNumber+1>.png
 #end tilebitmap
-#end tile
+#end tstile
 #map
   "<MapIdentifier>" : {
     "width" : <MapWidth>,
