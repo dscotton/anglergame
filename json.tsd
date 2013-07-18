@@ -9,8 +9,8 @@
 {
 #tileset
 #tstile
-#tilebitmap <TileSetIdentifier>-<TileNumber+1>.png
-#end tilebitmap
+#tstilebitmap <TileSetIdentifier>-<TileNumber+1>.png
+#end tstilebitmap
 #end tstile
 #map
   "<MapIdentifier>" : {
