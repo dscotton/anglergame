@@ -1,4 +1,5 @@
 {
-	"images": {"url": "images/_.pack", "type": "pack"},
-	"sound": {"url": "sound/_.pack", "type": "pack"}
+  "data": {"url": "data/_.pack", "type": "pack"},
+  "images": {"url": "images/_.pack", "type": "pack"},
+  "sound": {"url": "sound/_.pack", "type": "pack"}
 }
