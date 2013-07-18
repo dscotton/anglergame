@@ -19,7 +19,7 @@
     "tileset" : "<TileSetIdentifier>",
     "layout" : 
 #mapdata  "[\n      ["  ","  ",\n"  "],\n      ["  "],\n    ],"
-{"back": <TileNumber>, "mid": <TileNumber>, "front": <TileNumber>, "bounds": <Bounds:"%2d">, "mapcodes": <MapCode:"%2d">}
+{"back": <TSBackTile+1>, "mid": <TSMidTile+1>, "front": <TSFrontTile+1>, "bounds": <Bounds:"%2d">, "mapcodes": <MapCode:"%2d">}
 #end mapdata
   },
 #end map
