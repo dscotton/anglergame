@@ -10,6 +10,7 @@ import 'package:vector_math/vector_math.dart';
 part "lib/actions.dart";
 part "lib/boss.dart";
 part "lib/creature.dart";
+part "lib/environment.dart";
 part "lib/game_mode.dart";
 part "lib/inventory.dart";
 part "lib/rect.dart";
